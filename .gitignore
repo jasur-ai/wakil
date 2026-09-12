@@ -1,0 +1,34 @@
+# secrets — never commit
+.env
+.env.*
+*.pem
+*.key
+secrets/
+wakil_token
+*.token
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# node
+node_modules/
+dist/
+build/
+out/
+.next/
+.nuxt/
+.vite/
+
+# editors / os
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# misc
+*.log
+coverage/
