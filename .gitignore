@@ -32,3 +32,12 @@ Thumbs.db
 # misc
 *.log
 coverage/
+
+# wakil runtime — local-only, never commit
+*.session
+*.session-journal
+sessions/
+*.db
+*.db-wal
+*.db-shm
+outputs/

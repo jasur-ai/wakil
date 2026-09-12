@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>wakil — your personal Telegram delegate</title>
+<style>
+  :root{
+    --bg:#070D1A; --panel:#0F1B30; --panel2:#10233F; --line:#1E3A5F;
+    --blue:#2AABEE; --blue2:#7DD3FC; --gold:#F5C542; --green:#34D399;
+    --red:#F87171; --txt:#F8FAFC; --mut:#94A3B8; --dim:#64748B;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{background:var(--bg); color:var(--txt); font:16px/1.45 -apple-system,"Segoe UI",Roboto,Arial,sans-serif; min-height:100vh}
+  header{display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--bg); z-index:5}
+  .logo{font-weight:900; letter-spacing:2px; font-size:20px}
+  .logo b{color:var(--blue)}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:6px}
+  .dot.on{background:var(--green)}
+  .status{font-size:12px;color:var(--mut)}
+  .lang{background:var(--panel);border:1px solid var(--line);color:var(--blue2);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer}
+  main{max-width:640px;margin:0 auto;padding:16px 14px 90px}
+  .tab{display:none} .tab.on{display:block}
+  nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--panel);border-top:1px solid var(--line);z-index:5}
+  nav button{flex:1;background:none;border:0;color:var(--dim);padding:10px 4px 12px;font-size:11px;cursor:pointer}
+  nav button.on{color:var(--blue)}
+  nav button .ic{display:block;font-size:20px;margin-bottom:2px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+  .card h3{font-size:15px;margin-bottom:8px}
+  .small{font-size:12px;color:var(--mut)}
+  .btn{display:block;width:100%;background:var(--blue);color:#04121f;border:0;border-radius:12px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px}
+  .btn.gold{background:var(--gold)} .btn.ghost{background:none;border:1px solid var(--line);color:var(--mut);font-weight:400}
+  .btn.danger{background:var(--red);color:#2b0707}
+  .btn:disabled{opacity:.4}
+  .row{display:flex;gap:8px} .row .btn{flex:1}
+  input,select,textarea{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:11px;font-size:14px;margin-top:6px}
+  label{font-size:12px;color:var(--mut);display:block;margin-top:10px}
+  .progress{height:6px;background:var(--panel2);border-radius:3px;overflow:hidden;margin:14px 0}
+  .progress i{display:block;height:100%;background:var(--gold);width:0%}
+  .chip{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:700;margin-right:6px}
+  .chip.pass{background:#0d2b1f;color:var(--green);border:1px solid var(--green)}
+  .chip.rewrite{background:#2b2410;color:var(--gold);border:1px solid var(--gold)}
+  .chip.esc{background:#2b1010;color:var(--red);border:1px solid var(--red)}
+  .ev{border-left:3px solid var(--line);padding:8px 10px;margin:8px 0;background:var(--panel2);border-radius:0 10px 10px 0}
+  .ev.out{border-color:var(--blue)} .ev.esc{border-color:var(--red)} .ev.ok{border-color:var(--green)}
+  .ev .t{font-size:12px;color:var(--mut);margin-top:4px}
+  .cit{display:inline-block;background:#241d05;border:1px solid var(--gold);color:var(--gold);border-radius:6px;font-size:11px;padding:1px 7px;margin-left:6px}
+  .err{color:var(--red);font-size:13px;margin-top:8px;min-height:16px}
+  h2{font-size:18px;margin:18px 0 10px}
+  .step-ico{font-size:34px;text-align:center;margin:10px 0}
+  .step-title{text-align:center;font-weight:800;font-size:17px}
+  .step-body{text-align:center;color:var(--mut);font-size:14px;margin-top:8px}
+  .pref{display:flex;justify-content:space-between;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:8px}
+  .prov{font-size:11px;color:var(--blue2)}
+  .del{background:none;border:0;color:var(--red);font-size:12px;cursor:pointer}
+  .price{width:100%;border-collapse:collapse;margin-top:10px}
+  .price td{border-top:1px solid var(--line);padding:8px 4px;font-size:13px}
+  .price td:last-child{text-align:right;color:var(--gold);font-weight:700}
+  #wipeBox{display:none;border:1px solid var(--red)}
+  a{color:var(--blue2)}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">wakil<b>·</b>tg</div>
+  <div class="status"><span class="dot" id="dot"></span><span id="stat">api…</span></div>
+  <button class="lang" id="langBtn">UZ</button>
+</header>
+
+<main>
+  <!-- ONBOARDING -->
+  <section class="tab on" id="tab-start">
+    <div class="card">
+      <div class="step-ico" id="oIco">🛡️</div>
+      <div class="step-title" id="oTitle"></div>
+      <div class="progress"><i id="oBar"></i></div>
+      <div class="step-body" id="oBody"></div>
+      <div id="oExtra"></div>
+      <div class="row" id="oNav">
+        <button class="btn ghost" id="oBack">←</button>
+        <button class="btn" id="oNext"></button>
+      </div>
+      <div class="err" id="oErr"></div>
+    </div>
+    <div class="card"><h3 id="whyT"></h3><div class="small" id="whyB"></div></div>
+  </section>
+
+  <!-- CASE / TIMELINE -->
+  <section class="tab" id="tab-case">
+    <div class="card">
+      <h3 id="caseTitle">Kasmat</h3>
+      <div class="small" id="caseMeta"></div>
+      <div id="timeline"></div>
+      <div id="escModal" class="card" style="border-color:var(--red);display:none">
+        <h3 style="color:var(--red)">⚠️ wakil to'xtadi — qaror sizniki</h3>
+        <div id="escDetail" style="font-size:14px;margin:8px 0"></div>
+        <div class="row">
+          <button class="btn ghost" data-opt="accept_exception">Istisno</button>
+          <button class="btn" data-opt="hold">Kut (hold)</button>
+          <button class="btn danger" data-opt="stop">To'xtat</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREFS -->
+  <section class="tab" id="tab-prefs">
+    <div class="card"><h3>Qoidomlar (o'rganilgan)</h3><div class="small" id="prefsNote"></div><div id="prefsList"></div></div>
+  </section>
+
+  <!-- SEARCH -->
+  <section class="tab" id="tab-search">
+    <div class="card">
+      <h3>Qidiruv — sizning kanallaritingizda</h3>
+      <input id="q" placeholder="iPhone 15, PS5, …">
+      <button class="btn" id="qBtn">Qidirish</button>
+      <div id="priceWrap" style="display:none"><h3 style="margin-top:14px">Narx jadvali</h3><table class="price" id="priceT"></table></div>
+      <div class="small" style="margin-top:10px" id="watchNote"></div>
+      <button class="btn gold" id="watchBtn">📡 Watcher yoqish</button>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="tab" id="tab-set">
+    <div class="card">
+      <h3>Oilaviy qo'riqchi</h3>
+      <div class="small" id="guardNote"></div>
+      <button class="btn ghost" id="guardBtn">Read-only havola</button>
+      <div class="small" id="guardLink" style="margin-top:8px;word-break:break-all"></div>
+    </div>
+    <div class="card" id="wipeBox">
+      <h3 style="color:var(--red)">🗑 WIPE — hammasi, qaytmasdan</h3>
+      <label>Tasdiqlash uchun yozing: O'CHIRISH</label>
+      <input id="wipeIn" placeholder="O'CHIRISH">
+      <button class="btn danger" id="wipeBtn">WIPE</button>
+      <div class="err" id="wipeMsg"></div>
+    </div>
+    <button class="btn ghost" id="wipeToggle">Xavfsizlik</button>
+  </section>
+</main>
+
+<nav>
+  <button class="on" data-tab="start"><span class="ic">🛡️</span>Boshlash</button>
+  <button data-tab="case"><span class="ic">📋</span>Kasmat</button>
+  <button data-tab="prefs"><span class="ic">🧠</span>Qoidomlar</button>
+  <button data-tab="search"><span class="ic">🔎</span>Qidiruv</button>
+  <button data-tab="set"><span class="ic">⚙️</span>Sozlamalar</button>
+</nav>
+
+<script>
+const I18N = {
+  uz: {
+    nav:["Boshlash","Kasmat","Qoidomlar","Qidiruv","Sozlamalar"],
+    oNext:"Davom etish", whyT:"Nega wakil?",
+    whyB:"Ma'lumot qurilmadan chiqmaydi. 2FA majburiy. Agent faqat sizning vakolatnomangiz ichida ishlaydi. Har bir qonun iqtibosi manbali.",
+    steps:[
+      {i:"🛡️",t:"wakil",b:"Shaxsiy Telegram wakiliningiz. Sizga qarab — karshi tomonga gaplashadi."},
+      {i:"🔒",t:"Ma'lumot qurilmada",b:"Server — shu qurilma. Hech qanday uchinchi tomon serverga ma'lumot chiqmaydi. WIPE — bitta tugma."},
+      {i:"📱",t:"Telefon bilan kirish",b:"wakil sizning akkauntingiz orqali ishlaydi. Raqamni kiriting.",phone:true},
+      {i:"🔐",t:"2FA majburiy",b:"2FA o'chiq bo'lmasa, wakil yoqilmaydi. Kodsiz — yo'q. Buning uchun biz boramiz."},
+      {i:"🎯",t:"Qaysi suhbatlar?",b:"Agent faqat siz tanlagan rasmiy botlar va menejerlar bilan gaplashadi.",scope:true},
+      {i:"🎙️",t:"Ovozli vakolatnoma",b:"12 soniyalik ovozli xabar — vakolatnoma to'ldiriladi (uz ruхli). Min qiymat, muddat, chiqish nuqtasi.",voice:true},
+      {i:"📝",t:"Vakolatnoma kartasi",b:"Tekshiring — bu cheklov. Agent shundan tashqariga chiqolmaydi.",mandate:true},
+      {i:"✅",t:"Tayyor",b:"Kasmat ochiladi. Agent ishga tushadi."}
+    ],
+    obj:"Maqsad (qisqa)", who:"Karshi tomon (bot username)", minv:"Min qiymat (so'm)",
+    maxh:"Maksimal muddat (soat)", outcomes:"Qabul qilinadigan natijalar",
+    strat:"Strategiya (tabiat)", evid:"Isbotlar (order raqam)",
+    errMandate:"Vakolatnoma to'liq emas:", ok:"Tasdiqlandi ✅",
+    escAccept:"Istisno qabul", caseIdle:"Hozircha kasmat yo'q. Boshlash tugmasidan vakolatnoma yuboring.",
+    prefsNote:"👎/👍 orqali o'rganiladi. Har biri manbasi bilan. O'chirish mumkin.",
+    watchNote:"Narx o'zgarishida bot-DM xabarnoma + havola.", guardNote:"Oilaviy a'zoga read-only havola (token bilan).",
+    wipeT:"WIPE", statOff:"lokal", statOn:"lokal · on"
+  },
+  en: {
+    nav:["Start","Case","Prefs","Search","Settings"],
+    oNext:"Continue", whyT:"Why wakil?",
+    whyB:"Data never leaves the device. 2FA enforced. The agent acts only inside your mandate. Every law citation has a source.",
+    steps:[
+      {i:"🛡️",t:"wakil",b:"Your personal Telegram delegate. Talks to the other side — for you."},
+      {i:"🔒",t:"Data on-device",b:"The server is this device. No third-party servers. WIPE = one tap."},
+      {i:"📱",t:"Phone login",b:"wakil works through your account. Enter your number.",phone:true},
+      {i:"🔐",t:"2FA is mandatory",b:"No two-step verification — wakil won't start. That's the point."},
+      {i:"🎯",t:"Which chats?",b:"The agent talks only to official bots and managers you pick.",scope:true},
+      {i:"🎙️",t:"Voice mandate",b:"A 12-second voice note fills the mandate (in Uzbek). Floor, deadline, walk-away.",voice:true},
+      {i:"📝",t:"Mandate card",b:"Review it — these are the bounds. The agent cannot go beyond them.",mandate:true},
+      {i:"✅",t:"Ready",b:"Case opened. The agent starts working."}
+    ],
+    obj:"Objective (short)", who:"Counterpart (bot username)", minv:"Min value (UZS)",
+    maxh:"Max wait (hours)", outcomes:"Acceptable outcomes",
+    strat:"Strategy (tone)", evid:"Evidence (order ref)",
+    errMandate:"Mandate incomplete:", ok:"Confirmed ✅",
+    escAccept:"Accept exception", caseIdle:"No case yet. Start → create the mandate.",
+    prefsNote:"Learned from 👍/👎. Each has provenance. Delete any.",
+    watchNote:"On price change: bot-DM ping + jump link.", guardNote:"Read-only link for a family member (token).",
+    wipeT:"WIPE", statOff:"local", statOn:"local · on"
+  }
+};
+let L = I18N.uz, lang = "uz", caseId = null, since = 0, pollTimer = null, step = 0, scopeSel = ["uzum","beeline","ucell"], data = {phone:"", mandate:{}};
+
+const $ = s => document.querySelector(s);
+const t = k => L[k] || k;
+
+function applyI18n(){
+  document.querySelectorAll("nav button").forEach((b,i)=>b.childNodes[1].textContent=L.nav[i]);
+  $("#oNext").textContent = L.oNext; $("#whyT").textContent = L.whyT; $("#whyB").textContent = L.whyB;
+  $("#prefsNote").textContent = L.prefsNote; $("#watchNote").textContent = L.watchNote; $("#guardNote").textContent = L.guardNote;
+  $("#langBtn").textContent = lang.toUpperCase();
+  renderStep();
+}
+
+async function api(p, opt){
+  const r = await fetch(p, opt);
+  return {ok:r.ok, status:r.status, body: await r.json().catch(()=>({}))};
+}
+async function health(){
+  try{ const r = await api("/health"); const on = r.ok;
+    $("#dot").classList.toggle("on", on); $("#stat").textContent = on ? L.statOn : L.statOff;
+    if(on) caseId = r.body.last_case || caseId;
+  }catch(e){ $("#dot").classList.remove("on"); $("#stat").textContent = L.statOff; }
+}
+
+// -- onboarding ----------------------------------------------------------------
+function renderStep(){
+  const s = L.steps[step];
+  $("#oIco").textContent = s.i; $("#oTitle").textContent = s.t; $("#oBody").textContent = s.b;
+  $("#oBar").style.width = ((step+1)/L.steps.length*100)+"%";
+  $("#oBack").style.visibility = step ? "visible":"hidden";
+  $("#oNext").textContent = step===L.steps.length-1 ? t("wipeT").slice(0,0) || (lang==="uz"?"Boshlash":"Go") : t("oNext");
+  const x = $("#oExtra"); x.innerHTML = "";
+  if(s.phone){ x.innerHTML = `<label>${lang==="uz"?"Telefon (+998…)":"Phone (+998…)"}</label><input id="ph" placeholder="+998 90 000 00 00" value="${data.phone}">`; }
+  if(s.scope){ x.innerHTML = L.steps.map((st,i)=>0).join("") +
+      `<label>Rasmiy botlar (tanlang):</label>
+       <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" style="width:auto" class="sc" data-v="uzum" checked> @UzumSupport</label>
+       <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" style="width:auto" class="sc" data-v="beeline"> @BeelineUz_HelpBot</label>
+       <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" style="width:auto" class="sc" data-v="ucell"> @Ucell_bot</label>`; }
+  if(s.voice){ x.innerHTML = `<button class="btn gold" id="mic">🎙️ ${lang==="uz"?"Ovoz yozish (demo): 12s":"Record voice (demo): 12s"}</button>
+       <div class="small" id="micSt" style="margin-top:8px"></div>`;
+    $("#mic").onclick = ()=>{ $("#micSt").textContent = "…"; setTimeout(()=>{$("#micSt").textContent = lang==="uz"
+      ? "✓ tan olindi: «iPhone 15, 450 000 so'mdan past emas, 48 soat, qisman — yo'q»"
+      : "✓ heard: \"iPhone 15, not below 450 000, 48h, no partials\" (Whisper uz)"; data.voice=true; },900); }; }
+  if(s.mandate){ x.innerHTML = `
+      <label>${t("obj")}</label><input id="m_obj" value="${data.mandate.objective||""}">
+      <label>${t("who")}</label><input id="m_who" value="${data.mandate.counterpart||"@UzumSupport"}">
+      <div class="row">
+        <div style="flex:1"><label>${t("minv")}</label><input id="m_min" type="number" value="${data.mandate.min_value||450000}"></div>
+        <div style="flex:1"><label>${t("maxh")}</label><input id="m_h" type="number" value="${data.mandate.max_wait_hours||48}"></div>
+      </div>
+      <label>${t("outcomes")}</label><input id="m_out" value="${data.mandate.outcomes||"full_refund"}">
+      <label>${t("strat")}</label><input id="m_str" value="${data.mandate.strategy||(lang==="uz"?"meherban doimiylik, faktlar":"polite persistence, factual")}">
+      <label>${t("evid")}</label><input id="m_ev" value="${data.mandate.evidence||"UZ-778-112"}">`; }
+  if(step===3){ x.innerHTML = `<div class="card" style="border-color:var(--gold);margin-top:12px;background:none">
+      <div class="chip esc">2FA OFF</div><div class="small" style="margin-top:6px">${lang==="uz"
+      ? "wakil endi 2FA parolini o'rnatadi (edit_2fa). Bu qadam o'tkazib yuborilmaydi."
+      : "wakil now sets a 2FA password (edit_2fa). This step cannot be skipped."}</div></div>`; }
+}
+function collectMandate(){
+  data.mandate = {
+    objective: $("#m_obj").value.trim(),
+    counterpart: $("#m_who").value.trim(),
+    min_value: Number($("#m_min").value), max_wait_hours: Number($("#m_h").value),
+    outcomes: $("#m_out").value.split(",").map(s=>s.trim()).filter(Boolean),
+    strategy: $("#m_str").value.trim(), evidence: $("#m_ev").value.trim()
+  };
+}
+async function submitMandate(){
+  const m = data.mandate;
+  if(!m.objective || !m.counterpart || !m.min_value || !m.max_wait_hours || !m.outcomes.length || !m.evidence){
+    $("#oErr").textContent = L.errMandate + " " + ["objective","counterpart","min_value","max_wait_hours","outcomes","evidence"].filter(k=>!m[k]).join(", ");
+    return;
+  }
+  const payload = {
+    case_ref: "M-0001",
+    objective: m.objective,
+    counterpart: {name: m.counterpart, channel: m.counterpart},
+    bounds: {min_value: m.min_value, max_value: m.min_value,
+             acceptable_outcomes: m.outcomes, max_wait_hours: m.max_wait_hours,
+             non_negotiables: [lang==="uz"?"min qiymatdan past — yo'q":"below the floor — no"], allow_state_threat: true},
+    evidence: [{kind:"order_ref", ref:"order", data:{order: m.evidence}}],
+    strategy: m.strategy, created_at_ts: Date.now()/1000
+  };
+  const r = await api("/case", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({mandate: payload})});
+  if(r.ok){ caseId = r.body.case_id; since=0; switchTab("case"); startPoll(); }
+  else { $("#oErr").textContent = JSON.stringify(r.body).slice(0,180); }
+}
+$("#oNext").onclick = async ()=>{
+  if(step===5) collectMandate();
+  if(step===6){ collectMandate(); return submitMandate(); }
+  if(step===2 && $("#ph")) data.phone = $("#ph").value.trim();
+  if(step===5 && $("#mic")) collectMandate();
+  step++; if(step>=L.steps.length){ step=6; } renderStep();
+};
+$("#oBack").onclick = ()=>{ if(step>0){step--; renderStep();} };
+
+// -- case timeline --------------------------------------------------------------
+function evRow(e){
+  const p = e.payload||{};
+  let cls="", tag="", text="";
+  switch(e.type){
+    case "case.created": cls=""; tag=`<span class="chip pass">${lang==="uz"?"kasmat ochildi":"case created"}</span>`; text = p.mandate?.objective||""; break;
+    case "turn.outbound": cls="out"; tag=`<span class="chip ${p.guard_verdict==="PASS"?"pass":"rewrite"}">guard: ${p.guard_verdict}</span>`; text = p.text||""; break;
+    case "turn.inbound": tag=`<span class="chip rewrite">${lang==="uz"":"karshi tomon":"counterpart"}</span>`; text = p.text||""; break;
+    case "guard.escalation": cls="esc"; tag=`<span class="chip esc">⚠ ${p.rule}</span>`; text = p.violation||""; break;
+    case "user.decision": cls="ok"; tag=`<span class="chip pass">✓ ${p.option}</span>`; text=""; break;
+    case "verification.result": cls="ok"; tag=`<span class="chip ${p.verdict==="confirmed"?"pass":"esc"}">${lang==="uz"?"tekshiruv":"verify"}: ${p.verdict}</span>`; text = p.verdict==="confirmed" ? L.ok : ""; break;
+    case "dossier.ready": cls="ok"; tag=`<span class="chip pass">📄 dossier</span>`; text = p.path||""; break;
+    case "case.resolved": cls="ok"; tag=`<span class="chip pass">${lang==="uz"?"yopildi":"resolved"}</span>`; text = p.outcome||""; break;
+    default: cls=""; tag=`<span class="chip pass">${e.type}</span>`; text = JSON.stringify(p).slice(0,120);
+  }
+  const cit = p.citation ? `<span class="cit">${p.citation}</span>` : "";
+  return `<div class="ev ${cls}">${tag}${cit}<div>${text.replace(/</g,"&lt;")}</div><div class="t">#${e.id}</div></div>`;
+}
+async function refreshCase(){
+  if(!caseId) return;
+  const r = await api(`/case/${caseId}?since=${since}`.replace("?since",""));
+  if(!r.ok) return;
+  const c = r.body;
+  $("#caseTitle").textContent = `Kasmat ${c.id} — ${c.status}`;
+  $("#caseMeta").textContent = (c.mandate?.bounds?`${lang==="uz"":"min":"min"}: ${c.mandate.bounds.min_value} · ${lang==="uz"":"muddat":"wait"}: ${c.mandate.bounds.max_wait_hours}h`:"");
+  $("#timeline").innerHTML = (c.timeline||[]).map(evRow).join("") || `<div class="small">${L.caseIdle}</div>`;
+  const modal = $("#escModal");
+  if(c.pending_decision){
+    const lastEsc = [...(c.timeline||[])].reverse().find(e=>e.type==="guard.escalation");
+    $("#escDetail").textContent = lastEsc?.payload?.violation||"";
+    modal.style.display="block";
+  } else modal.style.display="none";
+}
+async function startPoll(){
+  stopPoll();
+  pollTimer = setInterval(refreshCase, 2000);
+  refreshCase();
+}
+function stopPoll(){ if(pollTimer){clearInterval(pollTimer); pollTimer=null;} }
+document.querySelectorAll("#escModal [data-opt]").forEach(b=> b.onclick = async ()=>{
+  const r = await api(`/case/${caseId}/decision`, {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({option:b.dataset.opt})});
+  if(r.ok){ $("#escModal").style.display="none"; refreshCase(); }
+});
+
+// -- prefs ---------------------------------------------------------------------
+async function refreshPrefs(){
+  const r = await api("/prefs"); if(!r.ok) return;
+  $("#prefsList").innerHTML = (r.body||[]).map(p=>`
+    <div class="pref"><div><b>${p.key}</b>: ${JSON.stringify(p.value)}
+      <div class="prov">${p.provenance||""}</div></div>
+      <button class="del" data-k="${p.key}">✕</button></div>`).join("") || `<div class="small">…</div>`;
+  document.querySelectorAll(".del").forEach(b=> b.onclick = async ()=>{ await api("/prefs/"+encodeURIComponent(b.dataset.k), {method:"DELETE"}); refreshPrefs(); });
+}
+
+// -- search ---------------------------------------------------------------------
+async function doSearch(){
+  const k = encodeURIComponent($("#q").value.trim());
+  const r = await api("/search?k="+k); if(!r.ok) return;
+  const b = r.body;
+  if((b.price_table||[]).length){
+    $("#priceWrap").style.display="block";
+    $("#priceT").innerHTML = b.price_table.map(p=>`<tr><td>${p.item}</td><td>${p.source}</td><td>${p.price}</td></tr>`).join("");
+  }
+}
+$("#qBtn").onclick = doSearch;
+$("#watchBtn").onclick = async ()=>{
+  await api("/watch", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({keyword: $("#q").value||"iPhone 15", scope:"global"})});
+  $("#watchNote").textContent = "✓ " + L.watchNote;
+};
+
+// -- settings ---------------------------------------------------------------------
+$("#guardBtn").onclick = ()=>{ $("#guardLink").textContent = caseId ? `${location.origin}/case/${caseId}/guardian?token=family-uz-2026` : (lang==="uz"?"Avval kasmat oching":"Open a case first"); };
+$("#wipeToggle").onclick = ()=>{ const w=$("#wipeBox"); w.style.display = w.style.display==="block"?"none":"block"; };
+$("#wipeBtn").onclick = async ()=>{
+  if($("#wipeIn").value.trim().toUpperCase() !== "O'CHIRISH"){ $("#wipeMsg").textContent = "✕"; return; }
+  const r = await api("/wipe", {method:"POST"});
+  $("#wipeMsg").textContent = r.ok ? (lang==="uz"?"✓ Barcha jadvallar o'chirildi. Qurilma toza.":"✓ All tables wiped. Device clean.") : "✕";
+  caseId=null; since=0; stopPoll(); refreshCase(); refreshPrefs();
+};
+
+// -- tabs & boot ---------------------------------------------------------------------
+function switchTab(name){
+  stopPoll();
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on", b.dataset.tab===name));
+  document.querySelectorAll(".tab").forEach(s=>s.classList.toggle("on", s.id==="tab-"+name));
+  if(name==="case") startPoll();
+  if(name==="prefs") refreshPrefs();
+}
+document.querySelectorAll("nav button").forEach(b=> b.onclick=()=>switchTab(b.dataset.tab));
+$("#langBtn").onclick = ()=>{ lang = lang==="uz"?"en":"uz"; L = I18N[lang]; applyI18n(); refreshCase(); };
+setInterval(health, 5000); health(); applyI18n();
+</script>
+</body>
+</html>

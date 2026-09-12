@@ -1,49 +1,21 @@
-# AI3 — running notes  *(repo intelligence)*
+# AI3 — running notes (P3 HANDS)
 
-**My job:** be the agent that *knows* this repo. Find things, publish facts, keep `reports/repo-info.md` fresh.
-Repo: https://github.com/jasur-ai/wakil — spelling is **`wakil`**, never `vakil`.
+Role: **bot backend / session**. Repo: **https://github.com/jasur-ai/wakil** · spelling **`wakil`** (never `vakil`).
 
-## What I own
+Before starting: read `chat.md` §4 board → claim a row → branch `ai3/<slug>` → commit prefix `ai3:` → PR → append START + DONE to `chat.md` §5.
 
-- `tools/ai3_repo_info.py` — the scanner (stdlib only, no dependencies).
-- `reports/repo-info.md` — human-readable repo snapshot (**generated**, never hand-edit).
-- `reports/repo-info.json` — the same data as JSON, for other agents to consume.
+## My tasks (from board)
+| Date | Task | Branch/PR | Status |
+|------|------|-----------|--------|
+| 2026-09-12 | **SPIKE FIRST — deadline D1 10:30**: `spike/resend_callback.md` (user session pressing a bot inline button) | `ai3/spike` | ⬜ |
+| 2026-09-12 | Stranger login → code → **2FA enforced** → session secured → WIPE, E2E on a test account at a public URL | `ai3/login-e2e` | ⬜ |
+| 2026-09-12 | Bot face (aiogram: DM intake, escalation buttons, guardian tokens) + live search vs 4 channels + watcher (2-min) + dossier E2E | `ai3/bot-face` | ⬜ |
+| 2026-09-12 | D3: `@consumergovuz_bot` read-only probe; `make demo` 6/6 cold starts; record full-system backup | `ai3/probe` | ⬜ |
 
-## How to run me
-
-```bash
-export GITHUB_TOKEN="$(cat ~/.wakil_token)"     # token lives outside the repo on purpose
-python3 tools/ai3_repo_info.py                  # reports/repo-info.md + .json
-python3 tools/ai3_repo_info.py --json-only
-python3 tools/ai3_repo_info.py --repo owner/name --out-dir reports
-```
-
-No `GITHUB_TOKEN` still works for public repos, but rate-limits hard (60 req/hour unauthenticated).
-
-## What the report answers
-
-- What is this repo? (visibility, description, license, topics, size, stars)
-- What's in it? (full file map + detected stack signals)
-- What changed lately? (last ~30 commits, who authored them)
-- Who works on it? (contributors, branch/tag/release list)
-- What's open? (issues + PRs with authors and labels)
-- How hot is it? (14-day views/clones, if the token has push rights)
-
-## Refresh policy
-
-Re-run after: any merge to `main`, any new branch worth tracking, or whenever AI1/AI2 ask a
-"where is X / what changed / who did what" question that the current report can't answer.
-Log every refresh in `chat.md`.
-
-## Run history
-
-| Date (UTC) | Trigger | Result |
-|------------|---------|--------|
-| 2026-09-12 | Repo bootstrap — first scan | `reports/repo-info.md` created |
-
-## Backlog for me
-
-- [ ] Add `--grep` so agents can search file contents via the code-search API.
-- [ ] Add a `--diff-since <sha>` mode: "what changed since commit X".
-- [ ] Emit a per-directory LOC table.
-- [ ] Optional: watch open PRs and post a summary into `chat.md`.
+## Notes / context
+- **Do not rebuild** — `session.py` (login + forced 2FA via `edit_2fa`), `flood.py`, `app.py` (FastAPI, 7 endpoints + wipe, serves mini app at `/`), `db.py`+`schema.sql`, `dossier.py`, `search.py` already exist. Extend them.
+- **Spike deadline is hard (10:30).** Result → `spike/resend_callback.md` + a `DECISIONS.md` line. Never discover it on demo day.
+- Secrets: env only (`API_ID`, `API_HASH`, `BOT_TOKEN`). `sessions/` + `*.session` never committed (gitignored), chmod 600.
+- Every outbound goes through AI1's guard — hands never sends raw LLM text.
+- Env names: `WAKIL_DB`, `WAKIL_SESSIONS`.
+- Task sheet: `hands/README.md`.

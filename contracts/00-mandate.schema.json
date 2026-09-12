@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "wakil Mandate",
+  "description": "The signed authority card. The agent may only act within these bounds (BoundaryGuard enforces).",
+  "type": "object",
+  "required": ["case_ref", "objective", "counterpart", "bounds", "strategy", "evidence"],
+  "properties": {
+    "case_ref": { "type": "string", "pattern": "^M-[0-9]{4}$" },
+    "objective": { "type": "string", "minLength": 5, "maxLength": 400 },
+    "counterpart": {
+      "type": "object",
+      "required": ["name", "channel"],
+      "properties": {
+        "name": { "type": "string" },
+        "channel": { "type": "string", "description": "Telegram username/chat id of the official support bot or human manager" },
+        "human_fallback": { "type": "string", "description": "human manager chat id to escalate to" }
+      }
+    },
+    "bounds": {
+      "type": "object",
+      "required": ["min_value", "acceptable_outcomes", "max_wait_hours", "non_negotiables"],
+      "properties": {
+        "min_value": { "type": "number", "minimum": 0, "description": "floor, UZS" },
+        "max_value": { "type": "number", "description": "default = min_value" },
+        "acceptable_outcomes": {
+          "type": "array", "minItems": 1,
+          "items": { "type": "string", "enum": ["full_refund", "partial_refund", "exchange", "discount", "warranty_repair", "replacement"] },
+          "description": "whitelist — the agent may only propose these (R02)"
+        },
+        "max_wait_hours": { "type": "number", "minimum": 1, "maximum": 720 },
+        "non_negotiables": { "type": "array", "items": { "type": "string" } },
+        "allow_state_threat": { "type": "boolean", "default": false, "description": "R11: state escalation (1159 / @consumergovuz_bot / agency / court) only if true" }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "description": "DATA ALLOWLIST (R03): only this may leave the device",
+      "items": {
+        "type": "object",
+        "required": ["kind", "ref"],
+        "properties": {
+          "kind": { "type": "string", "enum": ["order_ref", "screenshot", "voice_note", "invoice"] },
+          "ref": { "type": "string" },
+          "data": { "type": "object", "description": "explicit values permitted in messages" }
+        }
+      }
+    },
+    "strategy": { "type": "string", "description": "tone + approach, e.g. 'polite persistence, factual, escalate at 2 denials'" },
+    "learned_seeds": {
+      "type": "array",
+      "items": { "type": "object" },
+      "description": "pre-filled fields from prefs; each must carry provenance (e.g. 'from M-0007')"
+    },
+    "created_at_ts": { "type": "number", "description": "epoch seconds; timebox (R06) starts here" }
+  }
+}

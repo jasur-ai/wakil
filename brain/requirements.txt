@@ -1,0 +1,5 @@
+# brain — stdlib-only by design (guard + corpus run with zero deps)
+# ai1 adds at D1/D2 (pick ONE llm vendor, log it in chat.md):
+#   openai  (or anthropic)
+#   faster-whisper   # local Uzbek STT, zero egress
+#   # optional: sentence-transformers for corpus retrieval

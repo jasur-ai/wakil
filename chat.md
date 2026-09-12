@@ -1,40 +1,38 @@
-# chat.md — shared work log for `wakil`
+# chat.md — the single source of truth for `wakil`
 
-> This file is the **single source of truth** for coordination between the agents working on this repo.
-> Repo: **https://github.com/jasur-ai/wakil**  ·  Owner: **jasur-ai**  ·  Spelling rule: **`wakil`** — never `vakil`.
-
----
-
-## 0. The three rules
-
-1. **Append only.** Never rewrite or reformat someone else's entry. Add a new `###` entry at the **bottom** of the log (section 4).
-2. **Log before and after.** Write an entry when you *start* a task and another when you *finish* it (or when you hand it off / get blocked).
-3. **One task = one line in the board.** Update section 3 (Status board) in the same commit as your log entry. If two of us touch the board at once, the later push rebases and re-applies — do **not** delete the other agent's rows.
+> Repo: **https://github.com/jasur-ai/wakil** (public) · Owner: **jasur-ai** · Spelling rule: **`wakil`** — never `vakil`.
+> **Read this first.** Then your role's `README.md` (task sheet), then `contracts/`.
 
 ---
 
-## 1. Team & roles
+## 🚨 CONSOLIDATION NOTICE (2026-09-12)
+There were **three** parallel repos under `jasur-ai`: `VAKIL`, `wakil`, `wakil-everywhere`. The owner decided:
+- **ONE repo: `wakil`** (this one). Spelling **`wakil`** everywhere. **Public**.
+- All real product work (previously in `VAKIL`) is now **here**: `contracts/`, `brain/`, `hands/`, `face/`, `voice/`, `docs/`, `spike/`.
+- `VAKIL` and `wakil-everywhere` are **deleted**. Do not create new repos. Do not push anywhere but `jasur-ai/wakil`.
+- If you started work in the old repos, it has been migrated here — continue on your branch.
 
-| Agent | Role | Owns | Notes |
-|-------|------|------|-------|
-| **Team lead** | Coordination, repo & branch hygiene, merges, final review | `README.md`, `docs/`, releases | Keeps `chat.md` structure stable, resolves conflicts between agents |
-| **AI1** | *(to be assigned — build / feature implementation)* | `src/` | Claim a task in section 3 first |
-| **AI2** | *(to be assigned — build / feature implementation)* | `src/` | Claim a task in section 3 first |
-| **AI3** | **Repo intelligence** — find & publish information *in* / *about* repo `wakil` | `tools/ai3_repo_info.py`, `reports/` | Scans the repo (files, commits, issues, languages, size, activity) and keeps `reports/repo-info.md` fresh. Answers "where is X / what changed / who did what" questions for the others. |
+## The three rules
+1. **Append only.** Never rewrite or reformat someone else's entry. Add a new entry at the **bottom** of §5.
+2. **Log before and after.** Write an entry when you *start* a task and one when you *finish* / hand off / get blocked.
+3. **One task = one board row.** Update §4 in the same commit as your log entry. If two of us touch the board at once, the later push rebases — **do not delete** the other agent's rows.
 
-**Conventions**
+## 1. Team & roles (consolidated)
+| Agent | Role | Owns | Branch |
+|---|---|---|---|
+| **Lead** | Coordination, contracts, integration, demo/pitch, keeps `main` green & merges | `contracts/`, `voice/`, `chat.md`, `README.md` | `lead/<slug>` |
+| **AI1** | **P1 BRAIN** — agent: guard, corpus, state machine, prompts, Whisper(uz), vision, learning, eval | `brain/` | `ai1/<slug>` |
+| **AI2** | **P2 FACE** — Mini App UI/UX, tunnel, i18n, tablet choreography | `face/` | `ai2/<slug>` |
+| **AI3** | **P3 HANDS** — session+2FA, flood, FastAPI, search/watcher, dossier, **spike (D1 10:30)** | `hands/` | `ai3/<slug>` |
 
-- Branch naming: `ai1/<slug>`, `ai2/<slug>`, `ai3/<slug>`, `lead/<slug>`.
-- Commit prefix with your tag: `ai3: refresh repo-info report`.
-- Never push directly to `main` — open a PR (except the lead for docs-only or release commits).
-- Never commit secrets. GitHub token lives **outside** the repo (`~/.wakil_token`), loaded as `$GITHUB_TOKEN`.
+- Commit prefix = your tag: `ai1: ...`, `ai2: ...`, `ai3: ...`, `lead: ...`.
+- Never push directly to `main` — open a PR (lead merges). Exception: lead for docs-only.
+- **No secrets in git.** Token lives outside the repo (`~/.wakil_token` → `$GITHUB_TOKEN`; runtime env `API_ID`/`API_HASH`/`BOT_TOKEN`).
+- **Repo intelligence:** `python3 tools/ai3_repo_info.py` → refreshes `reports/repo-info.md` (anyone may run; keep it fresh after merges).
 
----
-
-## 2. Entry template (copy this)
-
+## 2. Entry template
 ```
-### YYYY-MM-DD HH:MM (UTC) — AI? — <status: START | UPDATE | DONE | BLOCKED | HANDOFF>
+### YYYY-MM-DD HH:MM (UTC) — <AGENT> — <START | UPDATE | DONE | BLOCKED | HANDOFF>
 - Task:
 - Branch / PR:
 - What I did:
@@ -43,67 +41,35 @@
 - Next / needs (who can unblock me):
 ```
 
----
+## 3. What already exists (Day 0 — DONE, do not rebuild)
+- **`contracts/`** — 4 frozen shared contracts (mandate schema, Hands API, Case Bus, Mini App REST). Change only via a logged Lead decision.
+- **`brain/`** — `guard.py` **BoundaryGuard, 11 rules, stdlib-only**; `test_guard.py` **17/17 passing** (`python test_guard.py`); `corpus.py` (LegalCorpus, seeded 18-modda / uzum-14 / 1159); `graph.py` (state-machine skeleton); `prompts/strategy_uz.md`.
+- **`hands/`** — `session.py` (login + **forced 2FA** `edit_2fa`), `flood.py`, `app.py` (FastAPI, all 7 endpoints + wipe, serves the mini app at `/`), `db.py`+`schema.sql` (9 tables), `dossier.py` (python-docx, 8 sections), `search.py`.
+- **`face/`** — `index.html` single-page Mini App (8-step onboarding, live timeline 2s poll, escalation modal, prefs+provenance, search+price table, guardian, **WIPE**), UZ/EN.
+- **`voice/`** — `runbook.md` (6 demo beats + failovers), `pitch-kit.md` (7 slides + 5-min script + Q&A×10), `counterpart_bot.py` (simulated @UzumSupport, 4 branches).
+- **`docs/`** — full strategy: `wakil-v2-winning-edition.md` (design), `idea1-wakil-deep-dive.md` (architecture), `team-battle-plan.md` (per-role D1–D3), `team-brief-wakil.md`, visuals (`wakil-poster.svg`, `wakil-hero.jpg`).
 
-## 3. Status board
-
+## 4. Status board
 | # | Task | Owner | Status | Updated |
-|---|------|-------|--------|---------|
-| 1 | Create GitHub repo `jasur-ai/wakil` | Team lead (AI3 acting) | ✅ DONE | 2026-09-12 |
-| 2 | Create `chat.md` shared log + team/role conventions | Team lead (AI3 acting) | ✅ DONE | 2026-09-12 |
-| 3 | Repo skeleton: README, AGENTS.md, docs/, .gitignore | Team lead (AI3 acting) | ✅ DONE | 2026-09-12 |
-| 4 | AI3 repo-intelligence tool + first `reports/repo-info.md` | AI3 | ✅ DONE | 2026-09-12 |
-| 5 | *(open)* Project brief — what `wakil` actually is / stack / scope | Team lead | 🟡 OPEN — needs user input | |
-| 6 | *(open)* AI1 first task | AI1 | ⬜ TODO | |
-| 7 | *(open)* AI2 first task | AI2 | ⬜ TODO | |
-| 8 | PR template (`.github/pull_request_template.md`) | Team lead (AI3 acting) | ✅ DONE | 2026-09-12 |
-| 9 | Repo topics: `wakil`, `multi-agent`, `agent-collaboration`, `work-log` | Team lead (AI3 acting) | ✅ DONE | 2026-09-12 |
-| 10 | Add CI (GitHub Actions) + LICENSE | Team lead | ⬜ TODO — needs `workflow` scope / owner's licence choice | |
+|---|---|---|---|---|
+| 1 | Consolidate 3 repos → single public `wakil` | Lead | ✅ DONE | 2026-09-12 |
+| 2 | Migrate all product work into `wakil` (spelling → `wakil`) | Lead | ✅ DONE | 2026-09-12 |
+| 3 | Spike: user-session presses bot button (`spike/resend_callback.md`) | AI3 | ⬜ TODO — **deadline D1 10:30** | 2026-09-12 |
+| 4 | Guard suite green in `wakil` (extend, don't break) | AI1 | 🟡 verify `python brain/test_guard.py` | 2026-09-12 |
+| 5 | Finish `brain/graph.py` loop + prompts + Whisper(uz) + vision + learning | AI1 | ⬜ TODO | 2026-09-12 |
+| 6 | Wire `face/` to live endpoints + tunnel public URL | AI2 | ⬜ TODO | 2026-09-12 |
+| 7 | Stranger login → 2FA enforced → WIPE, E2E on a test account | AI3 | ⬜ TODO | 2026-09-12 |
+| 8 | Bot face (aiogram) + search/watcher + dossier E2E | AI3 | ⬜ TODO | 2026-09-12 |
+| 9 | Fixtures: 12s UZ voice note, 4 channel posts, 2 wallet screenshots | Lead | ⬜ TODO | 2026-09-12 |
+| 10 | Deck from poster + script timed ×2 + Q&A cards | Lead | ⬜ TODO | 2026-09-12 |
+| 11 | Rehearsals (D2:1, D3:6) + backup video + printed runbook | Lead | ⬜ TODO | 2026-09-12 |
 
-Legend: ⬜ TODO · 🟡 IN PROGRESS / BLOCKED · ✅ DONE
+Legend: ⬜ TODO · 🟡 IN PROGRESS/BLOCKED · ✅ DONE
 
----
-
-## 4. Log  ← append new entries at the bottom
-
-### 2026-09-12 — TEAM LEAD / AI3 — DONE
-- Task: Bootstrap the repo and the shared log.
-- Branch / PR: `main` (initial commit, direct push by lead).
-- What I did:
-  - Created the public GitHub repo **jasur-ai/wakil** (https://github.com/jasur-ai/wakil) with issues + wiki + projects enabled, default branch `main`.
-  - Wrote `chat.md` (this file): rules, roles, entry template, status board.
-  - Wrote `README.md`, `AGENTS.md` (rules for agents), `docs/project-brief.md`, `.gitignore`.
-- Files touched: `chat.md`, `README.md`, `AGENTS.md`, `docs/project-brief.md`, `.gitignore`.
-- Result: repo exists and is cloneable; coordination rules are in place.
-- Next: AI3 scans the repo and publishes `reports/repo-info.md`; lead asks the user to confirm scope/stack so AI1 and AI2 can pick up real tasks.
-
-### 2026-09-12 — AI3 — DONE
-- Task: Repo intelligence — make repo `wakil` machine- and human-readable for the other agents.
-- Branch / PR: `main`.
-- What I did:
-  - Added `tools/ai3_repo_info.py`: a dependency-free (stdlib-only) GitHub API scanner. It pulls repo metadata, branches, tags, recent commits, contributors, the full file tree, open issues/PRs, language breakdown and traffic, then emits `reports/repo-info.md` + `reports/repo-info.json`.
-  - Ran it → produced the first `reports/repo-info.md` (repo snapshot + file map + activity).
-  - Documented how to run it (`GITHUB_TOKEN=... python3 tools/ai3_repo_info.py`) in `AGENTS.md` and in my own `ai-logs/ai3.md`.
-- Files touched: `tools/ai3_repo_info.py`, `reports/repo-info.md`, `reports/repo-info.json`, `ai-logs/ai3.md`.
-- Result: anyone (AI1/AI2/lead) can now answer "what's in this repo / what changed recently" in one look, or re-run the scanner for a fresh snapshot.
-- Next: keep `reports/repo-info.md` refreshed after every notable change; answer lookup questions from AI1/AI2 on request.
-
-### 2026-09-12 — TEAM LEAD / AI3 — DONE
-- Task: Finish the bootstrap so the other agents can start cleanly.
-- Branch / PR: `main` (docs-only / generated files, direct push by lead).
-- What I did:
-  - Pushed the initial commit and the AI3 report commit to `main` (`8acb3d4`, `c55a2ca`).
-  - Added repo topics: `wakil`, `multi-agent`, `agent-collaboration`, `work-log`.
-  - Added `.github/pull_request_template.md` so every PR states which agent authored it, which `chat.md` task it closes, and how it was verified.
-  - Updated the status board (rows 8–10).
-- Files touched: `.github/pull_request_template.md`, `chat.md`.
-- Result: repo is fully bootstrapped — clone → read `chat.md` → claim a task → PR.
-- Next / needs: **the owner must confirm scope** (see `docs/project-brief.md` §7). Until then AI1 and AI2 have no real tasks. A GitHub Actions workflow and a LICENSE are queued (row 10) — they need `workflow` scope on the PAT and a licence choice.
-
-### 2026-09-12 — AI3 — DONE
-- Task: Publish the first repo snapshot.
-- Branch / PR: `main`, commit `c55a2ca`.
-- What I did: ran `tools/ai3_repo_info.py` against `jasur-ai/wakil` → `reports/repo-info.md` + `reports/repo-info.json`.
-- Files touched: `reports/repo-info.md`, `reports/repo-info.json`.
-- Result: repo snapshot says — public, `main`, 10 files (`.gitignore`, `AGENTS.md`, `README.md`, `chat.md`, `ai-logs/ai1-3.md`, `docs/project-brief.md`, `tools/ai3_repo_info.py`, `reports/*`, `.github/pull_request_template.md`), 1 contributor (`jasur-ai`), 1 branch, no tags/releases, 0 open issues/PRs, Python + Markdown, 14-day traffic 0/0.
-- Next: re-run the scanner after every merge to `main`; answer lookup questions from AI1/AI2 on request. Backlog for me is listed in `ai-logs/ai3.md`.
+## 5. Log ← append new entries at the bottom
+### 2026-09-12 — LEAD — DONE (consolidation)
+- Task: Resolve the 3-repo split; make `wakil` the single public source of truth.
+- What I did: Owner decision (single repo `wakil`, public, spelling `wakil`). Migrated all product work from `VAKIL` into this repo, rewrote spelling `vakil`→`wakil` across all text + filenames, normalized env names (`WAKIL_DB`, `WAKIL_SESSIONS`), unified `chat.md`/`AGENTS.md`/`README.md`, kept the AI repo-scanner tool + PR template. Guard suite re-verified **17/17 green** in the new location.
+- Files touched: repo-wide (product dirs added; `chat.md`, `AGENTS.md`, `README.md`, `docs/project-brief.md`, `ai-logs/*` unified).
+- Result: one repo, one team, one spelling. `VAKIL` + `wakil-everywhere` to be deleted by lead.
+- Next: AI3 spike (row 3, **10:30**); AI1/AI2/AI3 pick up rows 4–8.

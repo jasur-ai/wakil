@@ -1,0 +1,148 @@
+<svg width="1000" height="1500" viewBox="0 0 1000 1500" xmlns="http://www.w3.org/2000/svg" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="32%" r="80%">
+      <stop offset="0%" stop-color="#13253F"/>
+      <stop offset="55%" stop-color="#0A1426"/>
+      <stop offset="100%" stop-color="#070D1A"/>
+    </radialGradient>
+    <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2AABEE"/>
+      <stop offset="100%" stop-color="#1D4ED8"/>
+    </linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="10"/>
+    </filter>
+    <filter id="blurBig" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="60"/>
+    </filter>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.6" fill="#16283F"/>
+    </pattern>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2AABEE"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect x="0" y="0" width="1000" height="1500" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1000" height="1500" fill="url(#dots)" opacity="0.55"/>
+  <ellipse cx="500" cy="640" rx="420" ry="330" fill="#1D4ED8" opacity="0.10" filter="url(#blurBig)"/>
+  <ellipse cx="830" cy="480" rx="230" ry="190" fill="#F5C542" opacity="0.05" filter="url(#blurBig)"/>
+  <rect x="24" y="24" width="952" height="1452" rx="10" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+
+  <!-- header -->
+  <text x="500" y="98" text-anchor="middle" font-size="21" letter-spacing="5" fill="#7DD3FC" font-weight="700">AI AGENTIC HACKATHON · TASHKENT 2026</text>
+  <text x="500" y="256" text-anchor="middle" font-size="150" font-weight="900" fill="#2AABEE" opacity="0.28" filter="url(#glow)">wakil</text>
+  <text x="500" y="256" text-anchor="middle" font-size="150" font-weight="900" fill="#F8FAFC">wakil</text>
+  <line x1="330" y1="284" x2="670" y2="284" stroke="#F5C542" stroke-width="2.5"/>
+  <text x="500" y="322" text-anchor="middle" font-size="27" letter-spacing="7" fill="#93C5FD" font-weight="700">YOUR PERSONAL TELEGRAM DELEGATE</text>
+  <rect x="168" y="352" width="664" height="60" rx="30" fill="#0F1B30" stroke="#2AABEE" stroke-width="1.5"/>
+  <text x="500" y="391" text-anchor="middle" font-size="24" fill="#E2E8F0">A chatbot answers.  <tspan fill="#F5C542" font-weight="800">wakil closes the case.</tspan></text>
+
+  <!-- scene: user -->
+  <text x="80" y="456" font-size="13" letter-spacing="2" fill="#7DD3FC" font-weight="700">VOICE NOTE · UZBEK</text>
+  <rect x="64" y="470" width="232" height="86" rx="18" fill="#0F1B30" stroke="#334155" stroke-width="1.5"/>
+  <path d="M150,556 l14,22 l12,-22 z" fill="#0F1B30"/>
+  <rect x="86" y="486" width="11" height="18" rx="5.5" fill="#7DD3FC"/>
+  <path d="M80,496 a12,12 0 0 0 23,0" fill="none" stroke="#7DD3FC" stroke-width="2.5"/>
+  <line x1="91.5" y1="508" x2="91.5" y2="516" stroke="#7DD3FC" stroke-width="2.5"/>
+  <text x="192" y="507" text-anchor="middle" font-size="19" fill="#E2E8F0">«I'm tired —</text>
+  <text x="192" y="533" text-anchor="middle" font-size="19" fill="#E2E8F0">just fix it.»</text>
+
+  <circle cx="140" cy="648" r="26" fill="#94A3B8"/>
+  <rect x="104" y="682" width="72" height="66" rx="28" fill="#94A3B8"/>
+  <rect x="210" y="684" width="40" height="72" rx="9" fill="#0F1B30" stroke="#7DD3FC" stroke-width="2"/>
+  <line x1="220" y1="694" x2="240" y2="694" stroke="#334155" stroke-width="2"/>
+  <path d="M254,684 a16,16 0 0 1 0,32" fill="none" stroke="#2AABEE" stroke-width="2.5" opacity="0.9"/>
+  <path d="M264,674 a26,26 0 0 1 0,52" fill="none" stroke="#2AABEE" stroke-width="2.5" opacity="0.55"/>
+  <path d="M274,664 a36,36 0 0 1 0,72" fill="none" stroke="#2AABEE" stroke-width="2.5" opacity="0.3"/>
+  <text x="170" y="788" text-anchor="middle" font-size="20" font-weight="700" fill="#94A3B8">THE USER</text>
+  <text x="170" y="812" text-anchor="middle" font-size="14" fill="#64748B">one phone · tired · voice note in</text>
+  <text x="170" y="830" text-anchor="middle" font-size="14" fill="#64748B">Uzbek — that's the whole interface</text>
+
+  <!-- arrow user -> mandate card -->
+  <line x1="252" y1="700" x2="286" y2="700" stroke="#2AABEE" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arr)"/>
+  <text x="338" y="622" text-anchor="middle" font-size="13" letter-spacing="2" fill="#7DD3FC" font-weight="700">SIGNED MANDATE</text>
+  <rect x="290" y="636" width="106" height="92" rx="10" fill="#10233F" stroke="#2AABEE" stroke-width="1.5"/>
+  <text x="343" y="662" text-anchor="middle" font-size="14" font-weight="800" fill="#F5C542">MIN 450K</text>
+  <text x="343" y="682" text-anchor="middle" font-size="14" fill="#E2E8F0">48H MAX</text>
+  <text x="343" y="702" text-anchor="middle" font-size="14" fill="#E2E8F0">WALK-AWAY</text>
+  <text x="343" y="722" text-anchor="middle" font-size="12" fill="#34D399">signed ✓</text>
+
+  <!-- shield emblem -->
+  <path d="M500,505 L610,545 V650 C610,730 500,790 500,790 C500,790 390,730 390,650 V545 Z" fill="none" stroke="#2AABEE" stroke-width="20" opacity="0.3" filter="url(#glow)"/>
+  <path d="M500,505 L610,545 V650 C610,730 500,790 500,790 C500,790 390,730 390,650 V545 Z" fill="#10233F" stroke="url(#blueGrad)" stroke-width="5"/>
+  <polyline points="452,642 492,682 562,588" fill="none" stroke="#F5C542" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="500" y="838" text-anchor="middle" font-size="24" font-weight="800" fill="#F8FAFC">MANDATE-BOUND AGENT</text>
+  <path d="M392,862 v-8 a10,10 0 0 1 20,0 v8" fill="none" stroke="#F5C542" stroke-width="4"/>
+  <rect x="386" y="862" width="32" height="24" rx="6" fill="#F5C542"/>
+  <circle cx="402" cy="873" r="3.5" fill="#0A1426"/>
+  <text x="432" y="880" font-size="18" fill="#7DD3FC">100% local · 2FA enforced · wipe in one tap</text>
+
+  <!-- arrow shield -> ladder -->
+  <path d="M614,596 C664,556 660,536 688,520" fill="none" stroke="#2AABEE" stroke-width="3" stroke-dasharray="7 6" marker-end="url(#arr)"/>
+  <text x="618" y="642" font-size="13" letter-spacing="2" fill="#7DD3FC" font-weight="700">ACTS AS YOU</text>
+
+  <!-- ladder -->
+  <circle cx="825" cy="432" r="20" fill="#F5C542"/>
+  <polyline points="815,432 822,440 837,423" fill="none" stroke="#0A1426" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <rect x="690" y="470" width="270" height="104" rx="14" fill="#0F1B30" stroke="#334155" stroke-width="1.5"/>
+  <line x1="728" y1="498" x2="728" y2="487" stroke="#2AABEE" stroke-width="2.5"/>
+  <circle cx="728" cy="483" r="3.5" fill="#2AABEE"/>
+  <rect x="706" y="498" width="44" height="34" rx="9" fill="#2AABEE"/>
+  <circle cx="720" cy="515" r="4.5" fill="#0A1426"/>
+  <circle cx="736" cy="515" r="4.5" fill="#0A1426"/>
+  <text x="768" y="512" font-size="19" font-weight="800" fill="#F8FAFC">STEP 1</text>
+  <text x="768" y="540" font-size="16" fill="#94A3B8">company support bot</text>
+
+  <line x1="825" y1="578" x2="825" y2="608" stroke="#2AABEE" stroke-width="3" marker-end="url(#arr)"/>
+
+  <rect x="690" y="614" width="270" height="104" rx="14" fill="#0F1B30" stroke="#334155" stroke-width="1.5"/>
+  <circle cx="728" cy="646" r="9" fill="#34D399"/>
+  <path d="M710,678 a18,18 0 0 1 36,0 z" fill="#34D399"/>
+  <text x="768" y="656" font-size="19" font-weight="800" fill="#F8FAFC">STEP 2</text>
+  <text x="768" y="684" font-size="16" fill="#94A3B8">human supervisor</text>
+
+  <line x1="825" y1="722" x2="825" y2="752" stroke="#2AABEE" stroke-width="3" marker-end="url(#arr)"/>
+
+  <rect x="690" y="758" width="270" height="104" rx="14" fill="#0F1B30" stroke="#F5C542" stroke-width="2"/>
+  <g transform="translate(706,778)">
+    <rect x="0" y="14" width="36" height="13" rx="5" fill="#F5C542" transform="rotate(-28 18 20)"/>
+    <rect x="20" y="28" width="28" height="8" rx="4" fill="#F5C542" transform="rotate(-28 34 32)"/>
+    <rect x="-3" y="46" width="48" height="5" rx="2.5" fill="#B45309"/>
+  </g>
+  <text x="768" y="800" font-size="19" font-weight="800" fill="#F5C542">STEP 3</text>
+  <text x="768" y="828" font-size="16" fill="#94A3B8">state agency · 1159</text>
+
+  <text x="825" y="900" text-anchor="middle" font-size="15" fill="#94A3B8">auto-built complaint dossier —</text>
+  <text x="825" y="920" text-anchor="middle" font-size="15" fill="#94A3B8">cites Art. 18 + evidence pack</text>
+
+  <!-- divider -->
+  <line x1="60" y1="984" x2="940" y2="984" stroke="#1E3A5F" stroke-width="1.5"/>
+
+  <!-- stat chips -->
+  <rect x="60" y="1024" width="190" height="92" rx="14" fill="#0F1B30" stroke="#1E3A5F" stroke-width="1.5"/>
+  <text x="155" y="1068" text-anchor="middle" font-size="30" font-weight="900" fill="#F5C542">20M+</text>
+  <text x="155" y="1096" text-anchor="middle" font-size="14" fill="#94A3B8">Uzum monthly users</text>
+
+  <rect x="290" y="1024" width="190" height="92" rx="14" fill="#0F1B30" stroke="#1E3A5F" stroke-width="1.5"/>
+  <text x="385" y="1068" text-anchor="middle" font-size="30" font-weight="900" fill="#F5C542">40%</text>
+  <text x="385" y="1096" text-anchor="middle" font-size="14" fill="#94A3B8">e-com CAGR · 3% of retail</text>
+
+  <rect x="520" y="1024" width="190" height="92" rx="14" fill="#0F1B30" stroke="#1E3A5F" stroke-width="1.5"/>
+  <text x="615" y="1068" text-anchor="middle" font-size="30" font-weight="900" fill="#F5C542">33%</text>
+  <text x="615" y="1096" text-anchor="middle" font-size="14" fill="#94A3B8">of state complaints = our case</text>
+
+  <rect x="750" y="1024" width="190" height="92" rx="14" fill="#0F1B30" stroke="#1E3A5F" stroke-width="1.5"/>
+  <text x="845" y="1068" text-anchor="middle" font-size="30" font-weight="900" fill="#F5C542">100%</text>
+  <text x="845" y="1096" text-anchor="middle" font-size="14" fill="#94A3B8">data never leaves device</text>
+
+  <!-- footer -->
+  <text x="500" y="1216" text-anchor="middle" font-size="21" letter-spacing="4" fill="#7DD3FC" font-weight="700">WHY NOW — THE FOUR CLOCKS</text>
+  <text x="500" y="1262" text-anchor="middle" font-size="25" fill="#F8FAFC">The arena is already in Telegram: company bots,</text>
+  <text x="500" y="1296" text-anchor="middle" font-size="25" fill="#F8FAFC">the state agency's bot — 1B+ MAU, 85% of Uzbekistan.</text>
+  <text x="500" y="1344" text-anchor="middle" font-size="19" fill="#94A3B8">Art. 18 · 10-day return right    ·    hotline 1159    ·    @consumergovuz_bot    ·    e-com 40%/yr</text>
+  <text x="500" y="1420" text-anchor="middle" font-size="31" font-weight="900" fill="#F5C542">The arena is ready. The player was missing.</text>
+  <text x="500" y="1462" text-anchor="middle" font-size="16" fill="#64748B">wakil · built in Tashkent · in the messenger where the fight already happens</text>
+</svg>

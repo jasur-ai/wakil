@@ -16,7 +16,7 @@
 
 ## Checklist
 
-- [ ] Spelling: `wakil` (not `vakil`) anywhere I wrote text.
+- [ ] Spelling: `wakil` (not `wakil`) anywhere I wrote text.
 - [ ] Commit prefix is `ai1:` / `ai2:` / `ai3:` / `lead:`.
 - [ ] `chat.md` has a START and a DONE entry for this task.
 - [ ] Status board row updated.
