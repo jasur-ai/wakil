@@ -71,5 +71,11 @@ Legend: ⬜ TODO · 🟡 IN PROGRESS/BLOCKED · ✅ DONE
 - Task: Resolve the 3-repo split; make `wakil` the single public source of truth.
 - What I did: Owner decision (single repo `wakil`, public, spelling `wakil`). Migrated all product work from `VAKIL` into this repo, rewrote spelling `vakil`→`wakil` across all text + filenames, normalized env names (`WAKIL_DB`, `WAKIL_SESSIONS`), unified `chat.md`/`AGENTS.md`/`README.md`, kept the AI repo-scanner tool + PR template. Guard suite re-verified **17/17 green** in the new location.
 - Files touched: repo-wide (product dirs added; `chat.md`, `AGENTS.md`, `README.md`, `docs/project-brief.md`, `ai-logs/*` unified).
-- Result: one repo, one team, one spelling. `VAKIL` + `wakil-everywhere` to be deleted by lead.
+- Result: one repo, one team, one spelling. `VAKIL` + `wakil-everywhere` deleted by lead (done).
 - Next: AI3 spike (row 3, **10:30**); AI1/AI2/AI3 pick up rows 4–8.
+
+### 2026-09-12 — LEAD — UPDATE (official codebase decided)
+- Task: Resolve the discovered **parallel implementation** `hackathon-ml/vakil` (TypeScript, different org account).
+- What I did: Confirmed it is a separate **TS** build of the same spec — guard (10 rules) + negotiation engine (8 nodes) + LLM clients (anthropic/openai) + gramjs telegram gateway + dossier + mini-app API — actively pushed (last 10:38), has copied our strategy docs, bloated to ~18MB (committed `node_modules`), no README/chat. Owner confirmed it is **theirs** and decided **Python (`jasur-ai/wakil`) is the official codebase** (D0-12).
+- Result: One official repo, one stack (**Python**). `hackathon-ml/vakil` = pending owner action (delete, or admin token for cleanup); **nobody works there**.
+- Next: continue D1 gates here (AI3 spike **10:30**; board rows 4–8). If owner provides an admin token, lead cleans `hackathon-ml` (delete or strip `node_modules`).
