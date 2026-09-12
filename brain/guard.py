@@ -21,6 +21,14 @@ Rules (checked in order, first hit wins):
     R10 dossier completeness — all 8 sections present (enforced via check_dossier)
     R11 state threat        — 1159 / agency / court only if allow_state_threat=true
 
+Advisory (opt-in, NOT in the default chain — ai1, see legal_findings.md):
+    R12 article fit         — citing Art. 18 (good-quality exchange) in a DEFECT case, or
+                              16/17 in a no-defect case, is legally wrong even though the
+                              article exists. Also: never quote text from a corpus entry the
+                              corpus itself marks non-quotable. Exposed as
+                              `check_article_fit()` and called by the Agent before send, so
+                              the D0 gate suite stays exactly as rehearsed.
+
 Stdlib only. Run the tests:  python test_guard.py
 """
 from __future__ import annotations
@@ -67,7 +75,14 @@ class GuardResult:
 
 # ---------------------------------------------------------------- helpers
 
-DISCLOSURE_MARKERS = ("wakil", "vakolat", "vaakil", "delegate", "mening wakilim", "authorized delegate")
+# R07 matches what the LLM and the counterparty actually WRITE. The brand is `wakil`
+# (AGENTS.md rule 1) and every piece of outbound copy uses it — but the Uzbek dictionary
+# word for "representative" is spelled with a v, so the model sometimes writes that form.
+# Accepting ONLY the brand spelling would make the guard REWRITE a natural, correct
+# disclosure sentence, i.e. "fix" valid Uzbek into worse Uzbek. Both forms pass here;
+# this list is a matcher, never brand copy.
+DISCLOSURE_MARKERS = ("wakil", "wakilman", "vakil", "vakilman", "vakolat", "vaakil", "wakolat",
+                      "delegate", "mening wakilim", "bizning vakilimiz", "authorized delegate")
 STATE_MARKERS = ("1159", "consumergovuz", "agentlig", "davlat", "state agency", "sudga", "sudda", "court")
 AGGRESSIVE = ("qaysar", "ahmoq", "oskor", "qo'pol", "fuck", "shit", "idiot", "тварь", "сука", "дурак", "идиот")
 PII_RES = (
@@ -75,6 +90,13 @@ PII_RES = (
     re.compile(r"\b\d{16}\b"),                  # card number
     re.compile(r"\b\d{3} ?\d{3} ?\d{3} ?\d\b"),  # id-ish
 )
+# UZ/RU are the working languages of the arena; anything else is a rewrite, not a suggestion.
+FOREIGN_WORDS = ("would", "like", "request", "refund", "under", "our", "policy", "please",
+                 "we", "your", "the", "and", "have", "been", "money", "back", "according",
+                 "article", "law", "hereby", "require", "consider", "dear")
+UZ_RU_WORDS = ("so'm", "sum", "buyurtma", "qaytar", "modda", "tasdiq", "rad", "beramiz",
+               "qilamiz", "so'raymiz", "vakil", "rizino", "vakolat", "возврат", "просим",
+               "товар", "ден", "шу", "holat", "taklif", "asos")
 MONEY_RE = re.compile(r"(\d[\d\s.,]*)\s*(k\b|so'?m\b|UZS\b)", re.IGNORECASE)
 
 
@@ -232,6 +254,16 @@ class BoundaryGuard:
         cyr = len(re.findall(r"[а-яё]", o.text, re.IGNORECASE))
         if max(latin, cyr) < 3:
             return GuardResult(Verdict.REWRITE, "R08-language", "outbound must be Uzbek or Russian — rewrite in uz or ru")
+        # Script alone is not language: an English sentence passes the check above, and
+        # an English demand at a Tashkent marketplace support desk is a lost case, not a
+        # style choice. Detect the foreign-function-word signature and send it back.
+        t = " " + re.sub(r"[^a-z'ʻ]+", " ", o.text.lower()) + " "
+        foreign = sum(1 for w in FOREIGN_WORDS if f" {w} " in t)
+        local = sum(1 for w in UZ_RU_WORDS if f" {w} " in t)
+        if foreign >= 2 and local == 0:
+            return GuardResult(Verdict.REWRITE, "R08-language",
+                "this reads as a foreign language — rewrite in Uzbek (or Russian if the "
+                "counterparty wrote in Russian); the counterpart is a UZ support desk")
         return None
 
     def r09_citation(self, o: Outbound) -> Optional[GuardResult]:
@@ -256,6 +288,31 @@ class BoundaryGuard:
                 return GuardResult(Verdict.BLOCK, "R11-state-threat",
                     f"'{w}' — state escalation (agency/1159/court) requires allow_state_threat=true in the mandate")
         return None
+
+    # -- R12 advisory (ai1): a real article used in the wrong kind of case --
+    def check_article_fit(self, o: Outbound, case_kind: str) -> GuardResult:
+        """An article can EXIST in the corpus and still be the wrong one to wave at a
+        seller. Art. 18 = exchange of a *good-quality* item; Art. 16/17 = *defective*
+        goods. Our demo case (nosoz iPhone, ekran defekti) is a defect case: citing 18
+        there is the fastest way for a human manager — or a lawyer in the jury — to
+        dismiss the whole claim. Advisory by design: called from the Agent, not from
+        check_outbound, so the rehearsed D0 gate suite is untouched."""
+        if self.corpus is None:
+            return GuardResult(Verdict.PASS, "R12-article-fit", "no corpus — fit not checked")
+        refs = o.citations or self.corpus.find_refs(o.text)
+        for ref in refs:
+            entry = self.corpus.get(ref)
+            if entry and not self.corpus.quotable(ref):
+                return GuardResult(Verdict.REWRITE, "R12-article-fit",
+                    f"'{ref}' is in the corpus but its text is unverified — argue the facts, do not quote it")
+            applies = self.corpus.article_applies_to(ref)
+            if applies in ("defect", "quality") and case_kind in ("defect", "quality") \
+                    and applies != case_kind:
+                want = "16-modda / 17-modda" if case_kind == "defect" else "18-modda"
+                return GuardResult(Verdict.REWRITE, "R12-article-fit",
+                    f"'{ref}' governs {applies}-goods cases, this is a {case_kind} case — "
+                    f"cite {want} instead (never the other way round, never invent)")
+        return GuardResult(Verdict.PASS, "R12-article-fit", "ok")
 
 
 # ---------------------------------------------------------------- mandate validation
