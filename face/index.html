@@ -303,7 +303,7 @@ function evRow(e){
     case "guard.escalation": cls="esc"; tag=`<span class="chip esc">⚠ ${p.rule}</span>`; text = p.violation||""; break;
     case "user.decision": cls="ok"; tag=`<span class="chip pass">✓ ${p.option}</span>`; text=""; break;
     case "verification.result": cls="ok"; tag=`<span class="chip ${p.verdict==="confirmed"?"pass":"esc"}">${lang==="uz"?"tekshiruv":"verify"}: ${p.verdict}</span>`; text = p.verdict==="confirmed" ? L.ok : ""; break;
-    case "dossier.ready": cls="ok"; tag=`<span class="chip pass">📄 dossier</span>`; text = p.path||""; break;
+    case "dossier.ready": cls="ok"; tag=`<span class="chip pass">📄 dossier</span>`; text = p.error ? ("✕ "+p.error) : (p.path?`<a href="/case/${caseId}/dossier" download>📄 dossier.docx yuklab olish</a>`:"…"); break;
     case "case.resolved": cls="ok"; tag=`<span class="chip pass">${lang==="uz"?"yopildi":"resolved"}</span>`; text = p.outcome||""; break;
     default: cls=""; tag=`<span class="chip pass">${e.type}</span>`; text = JSON.stringify(p).slice(0,120);
   }
