@@ -56,6 +56,9 @@
 | 5 | *(open)* Project brief — what `wakil` actually is / stack / scope | Team lead | 🟡 OPEN — needs user input | |
 | 6 | *(open)* AI1 first task | AI1 | ⬜ TODO | |
 | 7 | *(open)* AI2 first task | AI2 | ⬜ TODO | |
+| 8 | PR template (`.github/pull_request_template.md`) | Team lead (AI3 acting) | ✅ DONE | 2026-09-12 |
+| 9 | Repo topics: `wakil`, `multi-agent`, `agent-collaboration`, `work-log` | Team lead (AI3 acting) | ✅ DONE | 2026-09-12 |
+| 10 | Add CI (GitHub Actions) + LICENSE | Team lead | ⬜ TODO — needs `workflow` scope / owner's licence choice | |
 
 Legend: ⬜ TODO · 🟡 IN PROGRESS / BLOCKED · ✅ DONE
 
@@ -84,3 +87,23 @@ Legend: ⬜ TODO · 🟡 IN PROGRESS / BLOCKED · ✅ DONE
 - Files touched: `tools/ai3_repo_info.py`, `reports/repo-info.md`, `reports/repo-info.json`, `ai-logs/ai3.md`.
 - Result: anyone (AI1/AI2/lead) can now answer "what's in this repo / what changed recently" in one look, or re-run the scanner for a fresh snapshot.
 - Next: keep `reports/repo-info.md` refreshed after every notable change; answer lookup questions from AI1/AI2 on request.
+
+### 2026-09-12 — TEAM LEAD / AI3 — DONE
+- Task: Finish the bootstrap so the other agents can start cleanly.
+- Branch / PR: `main` (docs-only / generated files, direct push by lead).
+- What I did:
+  - Pushed the initial commit and the AI3 report commit to `main` (`8acb3d4`, `c55a2ca`).
+  - Added repo topics: `wakil`, `multi-agent`, `agent-collaboration`, `work-log`.
+  - Added `.github/pull_request_template.md` so every PR states which agent authored it, which `chat.md` task it closes, and how it was verified.
+  - Updated the status board (rows 8–10).
+- Files touched: `.github/pull_request_template.md`, `chat.md`.
+- Result: repo is fully bootstrapped — clone → read `chat.md` → claim a task → PR.
+- Next / needs: **the owner must confirm scope** (see `docs/project-brief.md` §7). Until then AI1 and AI2 have no real tasks. A GitHub Actions workflow and a LICENSE are queued (row 10) — they need `workflow` scope on the PAT and a licence choice.
+
+### 2026-09-12 — AI3 — DONE
+- Task: Publish the first repo snapshot.
+- Branch / PR: `main`, commit `c55a2ca`.
+- What I did: ran `tools/ai3_repo_info.py` against `jasur-ai/wakil` → `reports/repo-info.md` + `reports/repo-info.json`.
+- Files touched: `reports/repo-info.md`, `reports/repo-info.json`.
+- Result: repo snapshot says — public, `main`, 10 files (`.gitignore`, `AGENTS.md`, `README.md`, `chat.md`, `ai-logs/ai1-3.md`, `docs/project-brief.md`, `tools/ai3_repo_info.py`, `reports/*`, `.github/pull_request_template.md`), 1 contributor (`jasur-ai`), 1 branch, no tags/releases, 0 open issues/PRs, Python + Markdown, 14-day traffic 0/0.
+- Next: re-run the scanner after every merge to `main`; answer lookup questions from AI1/AI2 on request. Backlog for me is listed in `ai-logs/ai3.md`.
